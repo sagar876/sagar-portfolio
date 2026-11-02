@@ -18,7 +18,6 @@ Design direction: Concept A "Index" — see [`docs/design/visual-design-spec.md`
 | `npm run check`          | Typecheck + lint + format check                                     |
 | `npm run test:e2e`       | Build, then run Playwright tests (desktop + mobile) in local Chrome |
 | `npm test`               | Unit tests (Vitest)                                                 |
-| `npm run check:env`      | List missing production environment variables (names only)          |
 | `npm run smoke -- <url>` | Read-only checks against a deployed site                            |
 
 Copy `.env.example` to `.env.local` for local development. Deployment steps, environment variables, DNS, verification and rollback are in [`docs/deployment.md`](docs/deployment.md).

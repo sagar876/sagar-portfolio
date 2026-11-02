@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/check-env.mjs && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -15,7 +15,6 @@
     "test:e2e": "next build && playwright test",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:env": "node scripts/check-env.mjs",
     "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {

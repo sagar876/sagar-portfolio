@@ -24,7 +24,6 @@ Status legend: **[done]** verified in the repository · **[you]** needs your acc
 | 1.10 | Security headers set in `next.config.ts` (HSTS, nosniff, referrer policy, frame denial, permissions policy); `X-Powered-By` removed | [done] |
 | 1.11 | `robots.txt` and `sitemap.xml` generated; previews are blocked from indexing                                                        | [done] |
 | 1.12 | Vercel Web Analytics component installed (`@vercel/analytics`)                                                                      | [done] |
-| 1.13 | Pre-build check (`scripts/check-env.mjs`) fails **production** builds with missing or placeholder variables                         | [done] |
 
 ### Before the first push
 
@@ -53,8 +52,8 @@ No `gh` CLI is installed here, so create the repository in the browser.
 ## 3. Vercel project [you]
 
 1. vercel.com → **Add New… → Project** → import the GitHub repository (install the Vercel GitHub app for that repo when prompted).
-2. Framework preset: **Next.js** (auto-detected). Leave build and output settings at their defaults; `npm run build` already runs the environment check.
-3. **Before the first deploy**, open **Environment Variables** and add the values in section 4. If you deploy first, the production build will stop at the environment check, which is expected; add the variables and redeploy.
+2. Framework preset: **Next.js** (auto-detected). Leave build and output settings at their defaults.
+3. Deploy. No environment variables are required; add the optional ones in section 4 later and redeploy.
 4. **Settings → Git**
    - Production branch: `main` → every push or merge to `main` deploys to production.
    - Preview deployments are created automatically for every pull request and non-`main` branch, with a link posted on the PR.
@@ -75,7 +74,7 @@ Set in **Vercel → Project → Settings → Environment Variables**. Mark the A
 | `CONTACT_RATE_LIMIT_PER_IP` | optional                | optional   | Default 5 per 10 minutes.                                                                                                                                          |
 | `CONTACT_RATE_LIMIT_GLOBAL` | optional                | optional   | Default 30 per hour.                                                                                                                                               |
 
-Locally: `npm run check:env` lists anything missing (names only, never values).
+All variables are optional: the site builds and deploys without any of them. Without `NEXT_PUBLIC_SITE_URL`, canonical URLs use Vercel's production domain; without the Resend variables, the contact form tells visitors it can't send right now.
 
 ---
 
