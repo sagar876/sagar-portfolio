@@ -1,0 +1,42 @@
+Accessibility problems are usually fixed one bug at a time, and they come back one feature at a time. The lasting fix is to build accessibility into the shared components and the engineering process, so the default path is the accessible one.
+
+## Start with semantic HTML
+
+Native elements come with keyboard support, focus behaviour and screen-reader semantics for free. A `<button>` is focusable, activates on Enter and Space, and announces itself as a button. A `<div>` with a click handler does none of that.
+
+Use landmarks — `header`, `nav`, `main`, `footer` — and a logical heading order, so screen-reader users can navigate by structure.
+
+## Everything works with a keyboard
+
+Every interactive element must be reachable with Tab, operable with Enter or Space, and show a clear focus indicator.
+
+```css
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+```
+
+Provide a skip link to the main content, and never remove focus outlines without replacing them.
+
+## Manage focus when the page changes
+
+When a dialog opens, focus should move into it, stay inside it and return to the trigger when it closes. The native `<dialog>` element with `showModal()` handles all three. After client-side navigation, move focus to the new page's heading or main region so screen-reader users know something changed.
+
+## Colour, motion and text
+
+- Meet WCAG contrast ratios: 4.5:1 for body text, 3:1 for large text and UI boundaries.
+- Never use colour as the only signal; pair it with text or an icon.
+- Respect `prefers-reduced-motion` and avoid motion that is required to understand content.
+- Let text resize to 200% without breaking the layout.
+
+## Test continuously
+
+Automated tools such as axe catch many common issues — missing labels, low contrast, invalid ARIA — but not all of them. The rest needs people: navigate each new feature with only a keyboard, and with a screen reader such as VoiceOver or NVDA, before it ships.
+
+## Build it into the system
+
+1. Shared components handle labels, focus and keyboard behaviour.
+2. Lint rules catch common mistakes in review.
+3. Automated checks run in CI.
+4. Every feature gets a keyboard and screen-reader pass.

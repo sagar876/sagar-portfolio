@@ -1,0 +1,451 @@
+@import "tailwindcss";
+
+/*
+ * Design system tokens — Concept A "Index" (docs/design/visual-design-spec.md).
+ *
+ * Raw values exist only in this file. Tailwind's @theme turns them into
+ * utilities (bg-surface, text-fg-secondary, text-h2, py-section, desktop:…).
+ * Dark mode swaps raw values, so components never need `dark:` variants.
+ *
+ * Breakpoints (mobile-first):
+ *   mobile   < 640px   (no prefix)
+ *   tablet   ≥ 640px   tablet:
+ *   desktop  ≥ 1024px  desktop:
+ *   wide     ≥ 1280px  wide:
+ */
+
+/* ========================================================================== */
+/* Color                                                                      */
+/* ========================================================================== */
+
+/* Contrast ratios are against --background unless stated. */
+:root {
+  --background: #fafaf7; /* page */
+  --surface: #f1f1ec; /* figures, hover rows, subtle badges */
+  --surface-hover: #e8e8e2; /* hover/pressed fill on surface or ghost controls */
+
+  --fg: #111214; /* primary text — 17.9:1 */
+  --fg-secondary: #55585e; /* summaries, supporting text — 6.8:1 */
+  --fg-muted: #636569; /* labels, captions — 5.6:1; ≥4.7:1 on surface + surface-hover */
+
+  --accent: #d7261e; /* current-location marks and hover underlines — 4.8:1. Not for small text on surface. */
+
+  --border: #dcdcd5; /* decorative hairlines */
+  --border-strong: #8a8c91; /* control boundaries — 3.2:1 (WCAG 1.4.11) */
+
+  --action: #111214; /* primary button fill */
+  --action-hover: #2e3034;
+  --on-action: #fafaf7; /* text on action — 17.9:1 */
+
+  --focus: #111214; /* focus ring */
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #0f1011;
+    --surface: #17181a;
+    --surface-hover: #202124;
+    --fg: #edede8; /* 16.2:1 */
+    --fg-secondary: #a3a5a9; /* 7.7:1 */
+    --fg-muted: #8b8d92; /* 5.7:1; ≥4.8:1 on surface-hover */
+    --accent: #ff5a4e; /* 6.1:1 */
+    --border: #2a2b2e;
+    --border-strong: #6a6c70; /* 3.6:1 */
+    --action: #edede8;
+    --action-hover: #d2d2cc;
+    --on-action: #0f1011;
+    --focus: #edede8;
+
+    color-scheme: dark;
+  }
+}
+
+/* Explicit choice (future theme toggle) wins over the OS setting both ways. */
+:root[data-theme="dark"] {
+  --background: #0f1011;
+  --surface: #17181a;
+  --surface-hover: #202124;
+  --fg: #edede8;
+  --fg-secondary: #a3a5a9;
+  --fg-muted: #8b8d92;
+  --accent: #ff5a4e;
+  --border: #2a2b2e;
+  --border-strong: #6a6c70;
+  --action: #edede8;
+  --action-hover: #d2d2cc;
+  --on-action: #0f1011;
+  --focus: #edede8;
+
+  color-scheme: dark;
+}
+
+/* ========================================================================== */
+/* Theme reset — only tokens below generate utilities                         */
+/* ========================================================================== */
+
+@theme {
+  --color-*: initial;
+  --text-*: initial;
+  --breakpoint-*: initial;
+  --container-*: initial;
+
+  --breakpoint-tablet: 40rem; /* 640px */
+  --breakpoint-desktop: 64rem; /* 1024px */
+  --breakpoint-wide: 80rem; /* 1280px */
+}
+
+/* ========================================================================== */
+/* Layout — responsive grid, gutters and section rhythm (spec §A4, §A5)       */
+/* ========================================================================== */
+
+:root {
+  --grid-columns: 4;
+  --gutter: 1rem; /* 16px */
+  --page-margin: 1.25rem; /* 20px */
+  --section-space: 6rem; /* 96px */
+  --section-space-compact: 3rem; /* 48px */
+  --header-height: 4rem; /* 64px */
+
+  @variant tablet {
+    --grid-columns: 8;
+    --gutter: 1.25rem; /* 20px */
+    --page-margin: 2rem; /* 32px */
+    --section-space: 8rem; /* 128px */
+    --section-space-compact: 3.5rem; /* 56px */
+  }
+
+  @variant desktop {
+    --grid-columns: 12;
+    --gutter: 1.5rem; /* 24px */
+    --page-margin: 3rem; /* 48px */
+    --section-space: 10rem; /* 160px */
+    --section-space-compact: 4rem; /* 64px */
+  }
+
+  @variant wide {
+    --page-margin: 4rem; /* 64px */
+  }
+}
+
+/* ========================================================================== */
+/* Motion (spec §A10)                                                         */
+/* ========================================================================== */
+
+:root {
+  --duration-micro: 150ms; /* arrows, underline color */
+  --duration-ui: 250ms; /* hover fills, menus */
+  --duration-page: 400ms; /* entrances, route transitions */
+}
+
+/* ========================================================================== */
+/* Tokens → Tailwind utilities                                                */
+/* ========================================================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-on-action: var(--on-action);
+  --color-focus: var(--focus);
+
+  /* Font variables are set by next/font in src/lib/fonts.ts */
+  --font-sans:
+    var(--font-schibsted), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Responsive spacing: px-page-margin, gap-x-gutter, py-section, py-section-compact */
+  --spacing-page-margin: var(--page-margin);
+  --spacing-gutter: var(--gutter);
+  --spacing-section: var(--section-space);
+  --spacing-section-compact: var(--section-space-compact);
+  --spacing-header: var(--header-height);
+}
+
+@theme {
+  /* --- Type scale: fluid between 360px and 1440px viewports (spec §A3) --- */
+  --text-display-xl: clamp(2.5rem, 1rem + 6.667vw, 7rem); /* 40 → 112px */
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--letter-spacing: -0.035em;
+  --text-display-xl--font-weight: 500;
+
+  --text-display: clamp(2rem, 1.333rem + 2.963vw, 4rem); /* 32 → 64px */
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.025em;
+  --text-display--font-weight: 500;
+
+  --text-h1: clamp(1.75rem, 1.333rem + 1.852vw, 3rem); /* 28 → 48px */
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h1--font-weight: 500;
+
+  --text-h2: clamp(1.5rem, 1.333rem + 0.741vw, 2rem); /* 24 → 32px */
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h2--font-weight: 500;
+
+  --text-h3: clamp(1.25rem, 1.167rem + 0.37vw, 1.5rem); /* 20 → 24px */
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 500;
+
+  --text-h4: clamp(1.125rem, 1.083rem + 0.185vw, 1.25rem); /* 18 → 20px */
+  --text-h4--line-height: 1.3;
+  --text-h4--letter-spacing: -0.005em;
+  --text-h4--font-weight: 500;
+
+  --text-h5: 1rem; /* 16px */
+  --text-h5--line-height: 1.4;
+  --text-h5--font-weight: 600;
+
+  --text-h6: 0.875rem; /* 14px */
+  --text-h6--line-height: 1.4;
+  --text-h6--font-weight: 600;
+
+  --text-body-lg: clamp(1.125rem, 1.083rem + 0.185vw, 1.25rem); /* 18 → 20px */
+  --text-body-lg--line-height: 1.55;
+
+  --text-body: 1rem; /* 16px */
+  --text-body--line-height: 1.6;
+
+  --text-small: 0.875rem; /* 14px */
+  --text-small--line-height: 1.5;
+
+  /* Mono uppercase labels: years, stacks, eyebrows, badges */
+  --text-label: 0.75rem; /* 12px */
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.06em;
+
+  /* Mono running text: inline code, data */
+  --text-mono: 0.875rem; /* 14px */
+  --text-mono--line-height: 1.5;
+
+  /* --- Container widths --- */
+  --container-page: 90rem; /* 1440px — max-w-page */
+  --container-narrow: 60rem; /* 960px — max-w-narrow */
+  --container-measure: 68ch; /* reading line length — max-w-measure */
+
+  /* --- Media aspect ratios --- */
+  --aspect-cover: 16 / 10; /* featured project images */
+  --aspect-thumb: 4 / 3; /* thumbnails */
+
+  /* --- Motion --- */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --animate-rise: rise var(--duration-page) var(--ease-standard) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+}
+
+/* ========================================================================== */
+/* Custom utilities                                                           */
+/* ========================================================================== */
+
+/* 4 / 8 / 12-column page grid. */
+@utility grid-page {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+@utility duration-micro {
+  transition-duration: var(--duration-micro);
+}
+
+@utility duration-ui {
+  transition-duration: var(--duration-ui);
+}
+
+@utility duration-page {
+  transition-duration: var(--duration-page);
+}
+
+/* ========================================================================== */
+/* Motion                                                                     */
+/*                                                                            */
+/* Everything here is CSS: it needs no JavaScript and content is visible at    */
+/* rest if an effect is unsupported. Scroll-driven effects are progressive     */
+/* enhancements behind @supports, and all of them respect reduced motion.      */
+/* ========================================================================== */
+
+/* Accent underline that grows from the left when the parent link is hovered or focused. */
+@utility link-grow {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--duration-ui) var(--ease-standard);
+
+  :where(a, button):is(:hover, :focus-visible) & {
+    background-size: 100% 1px;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+/*
+ * Section reveal tied to scroll position (no observers, no JS). Applied
+ * sparingly: section headings and featured project previews only. Content
+ * already on screen at load is shown fully; unsupported browsers show
+ * everything immediately.
+ */
+@utility reveal-on-scroll {
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 20%;
+    }
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/*
+ * Reading progress for long pages, driven by the page's scroll position.
+ * Hidden where scroll timelines are unsupported. It is not autonomous motion
+ * (it only mirrors scrolling), so it stays on with reduced motion.
+ */
+@utility reading-progress {
+  display: none;
+
+  @supports (animation-timeline: scroll()) {
+    display: block;
+    transform-origin: 0 50%;
+    animation: grow-x linear both;
+    animation-duration: auto !important;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* ========================================================================== */
+/* Base                                                                       */
+/* ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: var(--header-height);
+  }
+
+  body {
+    @apply bg-background font-sans text-body text-fg antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  /* Lock page scroll while a modal dialog (mobile menu) is open. */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background-color: var(--fg);
+    color: var(--background);
+  }
+
+  /* One focus style everywhere: 2px ring, 3px offset, keyboard only. */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ========================================================================== */
+/* View transitions (React <ViewTransition>, see Next.js view-transitions guide) */
+/* ========================================================================== */
+
+/* Page content crossfades; keep it short so navigation never feels slow. */
+::view-transition-group(*) {
+  animation-duration: var(--duration-ui);
+  animation-timing-function: var(--ease-standard);
+}
+
+/* Project image morphs from its card into the case-study header. */
+::view-transition-group(.morph) {
+  animation-duration: var(--duration-page);
+}
+
+/* The header is the fixed reference point: it never animates. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* Clicks during a transition reach the live page. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

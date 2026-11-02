@@ -1,0 +1,37 @@
+Most React performance problems come from doing work that does not need to happen, or doing it at the wrong time. The fastest way to find them is to measure before changing anything.
+
+## Measure first
+
+Start with the user-facing numbers: Largest Contentful Paint for loading and Interaction to Next Paint for responsiveness. Then use the React DevTools Profiler to see which components render, how often and why.
+
+Optimising without a measurement usually adds complexity in the wrong place.
+
+## Render less
+
+A component re-renders when its parent renders, its state changes or a context it reads changes. Common fixes:
+
+- **Move state down** to the component that uses it, so changes don't re-render siblings.
+- **Split contexts** so a value that changes often doesn't re-render every consumer of a value that rarely does.
+- **Pass children** instead of rendering them inside a stateful parent; React won't re-render elements it received as props.
+- **Memoise deliberately.** `React.memo`, `useMemo` and `useCallback` help when profiling shows an expensive render with stable inputs. The React Compiler can apply this automatically.
+
+## Render less at once
+
+Long lists are a frequent cause of slow interactions. Virtualisation renders only the rows in view. For expensive updates that aren't urgent, `startTransition` lets React keep typing and clicking responsive while it renders in the background.
+
+```tsx
+const [query, setQuery] = useState("");
+const deferredQuery = useDeferredValue(query);
+const results = useMemo(() => search(items, deferredQuery), [items, deferredQuery]);
+```
+
+## Ship less JavaScript
+
+- Render on the server where possible, and keep client components small.
+- Split code by route and load heavy features on demand.
+- Check what each dependency adds to the bundle before installing it.
+- Serve images in modern formats at the size they are displayed.
+
+## Keep it fast
+
+Add performance budgets to CI and track real-user metrics in production. Regressions are much cheaper to fix the day they are introduced than six months later.

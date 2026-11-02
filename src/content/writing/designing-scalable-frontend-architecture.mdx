@@ -1,0 +1,49 @@
+A frontend rarely becomes hard to change because of one bad decision. It gets there slowly, as features are added wherever there is room and every part of the code can reach every other part. Scalable architecture is mostly about drawing boundaries early and keeping them.
+
+## Start with ownership, not folders
+
+Before choosing a structure, list the parts of the product and who owns each one. A boundary in the code is only useful if it matches a boundary in the team. Good candidates are:
+
+- Product areas that change for different reasons, such as checkout and account settings
+- Shared foundations every area depends on: the design system, data access and authentication
+- Cross-cutting concerns that need one owner: routing, analytics and error reporting
+
+## Make dependencies point one way
+
+Feature modules can depend on shared foundations, but foundations must never import from features, and features should not import from each other. When two features need the same thing, move it down into a shared module with its own owner.
+
+```ts
+// eslint.config.mjs — enforce the direction with a lint rule rather than a wiki page
+{
+  rules: {
+    "no-restricted-imports": ["error", {
+      patterns: [{ group: ["@/features/*/*"], message: "Import a feature only through its public index." }],
+    }],
+  },
+}
+```
+
+Each feature exposes a small public interface, usually an `index.ts`, and keeps everything else private. That interface is the contract other teams rely on.
+
+## Shared contracts
+
+Most coupling between teams happens through data. Typed API clients, shared event names and versioned schemas let teams change their internals without breaking each other. Keep these contracts in one place and review changes to them more carefully than changes to anything else.
+
+## When micro-frontends are worth it
+
+Micro-frontends let teams build, test and deploy parts of the interface independently. They solve an organisational problem — many teams blocked on one release — and they cost real complexity: duplicated dependencies, harder performance work and a shell application that everything depends on.
+
+They are worth considering when:
+
+- Several teams own clearly separate areas of the product
+- Release coordination is a recurring bottleneck
+- Areas have genuinely different technical needs
+
+If a well-structured single application with enforced module boundaries solves the problem, start there. It is much easier to split a modular monolith later than to merge micro-frontends back together.
+
+## Questions to answer in an architecture review
+
+1. Who owns each module, and does the code structure reflect that?
+2. Which way do dependencies point, and is that enforced automatically?
+3. Where are the shared contracts, and how are breaking changes handled?
+4. What would it take to move one area to its own deployment?
