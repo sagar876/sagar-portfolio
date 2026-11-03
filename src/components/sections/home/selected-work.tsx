@@ -17,7 +17,7 @@ export function SelectedWork() {
         description={workContent.description}
         action={{ label: workContent.allWorkLabel, href: "/work" }}
       />
-      <ul className="flex flex-col gap-24 desktop:gap-40">
+      <ul className="grid gap-x-gutter gap-y-20 desktop:grid-cols-2 desktop:gap-y-28">
         {featuredProjects.map((project) => (
           <li key={project.slug}>
             <ProjectCard project={project} variant="featured" />

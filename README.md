@@ -1,6 +1,6 @@
 # Sagar Dixit — Portfolio
 
-Personal portfolio built with Next.js (App Router), React, TypeScript (strict), Tailwind CSS v4 and MDX.
+Personal portfolio built with Next.js (App Router), React, TypeScript (strict), Tailwind CSS v4.
 
 Design direction: Concept A "Index" — see [`docs/design/visual-design-spec.md`](docs/design/visual-design-spec.md).
 
@@ -36,7 +36,7 @@ src/
     case-study/        Case-study blocks, header, contents list, results, related projects
     animations/        Reveal (CSS entrance) and ReadingProgress (scroll-driven bar)
   config/              Site identity, links and navigation — the only place for these values
-  content/             Projects, experience and writing as typed data
+  content/             Projects, experience and About copy as typed data
   data/                Supporting data (expertise list)
   hooks/               Client hooks (empty for now)
   lib/                 cn, fonts, metadata helpers, motion tokens, utilities
@@ -47,11 +47,11 @@ public/
 
 ## Conventions
 
-- Server Components by default; `"use client"` only for interactivity (navigation, mobile menu, sticky header, contents list, writing filter, error boundaries).
+- Server Components by default; `"use client"` only for interactivity (navigation, mobile menu, sticky header, contents list, error boundaries).
 - Design tokens live only in `src/app/globals.css`. Tailwind's default palette, type scale, breakpoints and container sizes are disabled, so only token utilities exist (`bg-surface`, `text-fg-secondary`, `text-h2`, `py-section`, `px-page-margin`, `desktop:`).
 - Breakpoints: mobile (default), `tablet:` 640px, `desktop:` 1024px, `wide:` 1280px.
 - Use named grid spans (`rail`, `headline`, `main`, `prose`, `wide`, `full`) instead of raw column numbers.
-- Motion is CSS-first: entrance, reveal and progress effects are CSS (scroll-driven where supported); page transitions and the project-cover morph use React `<ViewTransition>`. The Motion library is used in two places only: the mobile menu (loaded on demand, never on desktop) and the writing filter. Check the bundle impact before using it anywhere else.
+- Motion is CSS-first: entrance, reveal and progress effects are CSS (scroll-driven where supported); page transitions and the project-cover morph use React `<ViewTransition>`. The Motion library is used only by the mobile menu, which loads it on demand (never on desktop). Check the bundle impact before using it anywhere else.
 - Content goes in `src/content`; leave unknown details undefined rather than guessing.
 
 ## Adding a case study
@@ -61,6 +61,6 @@ public/
 3. Build sections from blocks: `paragraph`, `subheading`, `list`, `definitions`, `figure` (`single`, `wide`, `two-up`, `three-up`), `architecture-diagram`, `flow-diagram`, `diagram-image`, `code`, `decision`, `tradeoff`, `callout`. Wrap identifiers in backticks to set them in mono.
 4. Put images in `public/images/projects/<slug>/` and give each its real `width` and `height`.
 5. Add `results` only with verified numbers. It requires a `source`, which is shown under the metrics.
-6. Import the project in `src/content/projects/index.ts`. Once three real projects exist, remove `exampleProjects` and delete `examples.ts` and `public/images/projects/example/`.
+6. Import the project in `src/content/projects/index.ts`. Its position in that list is its position on the site.
 
 The build fails on duplicate slugs, invalid slugs, unknown `related` slugs or results without a source.

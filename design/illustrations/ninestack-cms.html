@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Illustration: story CMS editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="_base.css">
+<style>
+  /* Illustration only: invented story, sections and settings. */
+  :root { --accent: #e0522a; --accent-soft: #fde9e2; }
+  .app { display: grid; grid-template-rows: 60px 1fr; height: 100%; }
+  .top { display: flex; align-items: center; gap: 14px; padding: 0 20px; border-bottom: 1px solid var(--line); }
+  .crumb { font: 500 14px var(--sans); color: var(--ink-2); }
+  .crumb b { color: var(--ink); font-weight: 600; }
+  .saved { font: 400 12px var(--mono); color: var(--ink-3); }
+  .spacer { flex: 1; }
+  .avatars { display: flex; }
+  .avatars i { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; margin-left: -8px; display: block; }
+  .btn.publish { background: var(--accent); color: #fff; }
+  .body { display: grid; grid-template-columns: 250px 1fr 300px; min-height: 0; }
+  .sections { border-right: 1px solid var(--line); padding: 18px 14px; display: flex; flex-direction: column; gap: 10px; background: #fbfbf9; }
+  .sec { display: grid; grid-template-columns: 22px 64px 1fr; gap: 10px; align-items: center; padding: 8px; border-radius: 10px; }
+  .sec.on { background: #fff; box-shadow: 0 0 0 1.5px var(--accent); }
+  .sec .n { font: 500 11px var(--mono); color: var(--ink-3); }
+  .thumb { height: 42px; border-radius: 6px; background: #ebebe6; position: relative; overflow: hidden; }
+  .thumb.cover { background: linear-gradient(180deg, #f2b27a 0%, #e0794e 45%, #3b4a6b 100%); }
+  .thumb.lines::before, .thumb.lines::after { content: ""; position: absolute; left: 8px; right: 14px; height: 4px; border-radius: 2px; background: #cfcfc8; top: 12px; }
+  .thumb.lines::after { top: 22px; right: 24px; }
+  .thumb.scroll { background: linear-gradient(90deg, #2d3b5c 50%, #ebebe6 50%); }
+  .thumb.gallery { background: repeating-linear-gradient(90deg, #9fb7c9 0 18px, #fff 18px 21px); }
+  .sec span.t { font: 500 13px var(--sans); }
+  .sec small { display: block; font: 400 11px var(--mono); color: var(--ink-3); margin-top: 2px; }
+  .add { margin-top: 4px; height: 38px; border: 1.5px dashed #d6d6cf; border-radius: 10px; display: grid; place-items: center; font: 600 13px var(--sans); color: var(--ink-2); }
+  .canvas { background: #e9e8e3; padding: 24px 28px; overflow: hidden; position: relative; }
+  .story { background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 12px 40px -18px rgba(0,0,0,.35); }
+  .hero { height: 470px; position: relative; overflow: hidden; outline: 2px solid var(--accent); outline-offset: -2px; }
+  .hero svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero .copy { position: absolute; left: 56px; bottom: 54px; right: 120px; color: #fff; }
+  .kicker { font: 500 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+  .hero h1 { font: 500 68px/0.98 var(--serif); letter-spacing: -.02em; margin: 14px 0 14px; }
+  .hero p { font: 400 20px/1.45 var(--serif); max-width: 520px; opacity: .92; }
+  .tag { position: absolute; top: 0; left: 0; background: var(--accent); color: #fff; font: 600 11px var(--mono); padding: 5px 9px; border-bottom-right-radius: 6px; letter-spacing: .04em; }
+  .toolbar { position: absolute; top: 18px; right: 18px; display: flex; gap: 2px; padding: 4px; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px -8px rgba(0,0,0,.35); }
+  .toolbar span { height: 32px; padding: 0 10px; border-radius: 7px; display: grid; place-items: center; font: 600 12px var(--sans); color: var(--ink-2); }
+  .toolbar span.on { background: var(--ink); color: #fff; }
+  .text { padding: 44px 140px 60px; display: flex; flex-direction: column; gap: 14px; }
+  .text .drop { font: 400 20px/1.6 var(--serif); color: var(--ink); }
+  .text .drop b { float: left; font: 500 64px/0.8 var(--serif); margin: 8px 10px 0 0; color: var(--accent); }
+  .props { border-left: 1px solid var(--line); padding: 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .group h3 { font: 600 13px var(--sans); }
+  .media { height: 96px; border-radius: 8px; background: linear-gradient(180deg, #f2b27a 0%, #e0794e 45%, #3b4a6b 100%); position: relative; }
+  .media span { position: absolute; right: 8px; bottom: 8px; background: rgba(255,255,255,.9); border-radius: 6px; font: 600 11px var(--sans); padding: 4px 8px; }
+  .row { display: flex; justify-content: space-between; align-items: center; font: 500 13px var(--sans); color: var(--ink-2); }
+  .slider { height: 4px; border-radius: 2px; background: #e4e4de; position: relative; }
+  .slider i { position: absolute; left: 0; top: 0; bottom: 0; width: 40%; background: var(--ink); border-radius: 2px; }
+  .slider b { position: absolute; left: 40%; top: 50%; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); transform: translate(-50%, -50%); }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg span { height: 32px; display: grid; place-items: center; font: 500 12px var(--sans); color: var(--ink-2); }
+  .seg span.on { background: var(--ink); color: #fff; }
+  .input { height: 36px; border: 1px solid #d6d6cf; border-radius: 8px; display: flex; align-items: center; padding: 0 10px; font: 500 12px var(--mono); color: var(--ink-2); }
+  .check { display: flex; align-items: center; gap: 8px; font: 500 13px var(--sans); }
+  .check i { width: 16px; height: 16px; border-radius: 4px; background: var(--accent); display: block; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="chrome"><i></i><i></i><i></i><div class="url">stories.example.app/edit/the-long-way-home</div></div>
+  <div class="app">
+    <header class="top">
+      <div class="crumb">Stories / <b>The Long Way Home</b></div>
+      <span class="pill" style="background:#f1f1ec;color:var(--ink-2)">Draft</span>
+      <span class="saved">Saved 2 min ago</span>
+      <div class="spacer"></div>
+      <div class="avatars"><i style="background:#9fb7c9"></i><i style="background:#e0b48a"></i><i style="background:#b9a9d8"></i></div>
+      <span class="btn ghost">Preview</span>
+      <span class="btn publish">Publish</span>
+    </header>
+    <div class="body">
+      <aside class="sections">
+        <span class="label" style="padding:0 6px 4px">Sections</span>
+        <div class="sec on"><span class="n">01</span><div class="thumb cover"></div><span class="t">Title<small>Full-bleed image</small></span></div>
+        <div class="sec"><span class="n">02</span><div class="thumb lines"></div><span class="t">Text<small>Intro</small></span></div>
+        <div class="sec"><span class="n">03</span><div class="thumb scroll"></div><span class="t">Scrollytelling<small>4 steps</small></span></div>
+        <div class="sec"><span class="n">04</span><div class="thumb gallery"></div><span class="t">Gallery<small>8 images</small></span></div>
+        <div class="sec"><span class="n">05</span><div class="thumb lines"></div><span class="t">Text<small>Chapter two</small></span></div>
+        <div class="add">+ Add section</div>
+      </aside>
+
+      <main class="canvas">
+        <div class="story">
+          <div class="hero">
+            <svg viewBox="0 0 900 470" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c48f"/><stop offset=".55" stop-color="#e98a5c"/><stop offset="1" stop-color="#b3584a"/></linearGradient>
+                <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5d86"/><stop offset="1" stop-color="#1e2740"/></linearGradient>
+                <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".35" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>
+              </defs>
+              <rect width="900" height="470" fill="url(#sky)"/>
+              <circle cx="770" cy="205" r="46" fill="#fde3b8"/>
+              <path d="M0 250 L120 190 L210 230 L330 160 L450 225 L560 185 L700 240 L820 200 L900 230 L900 300 L0 300Z" fill="#9a6274"/>
+              <path d="M0 280 L90 245 L220 275 L360 230 L500 270 L640 240 L780 275 L900 255 L900 320 L0 320Z" fill="#5b4a6a"/>
+              <rect y="300" width="900" height="170" fill="url(#sea)"/>
+                            <g stroke="#fde3b8" stroke-opacity=".4" stroke-width="2"><path d="M745 318 h50"/><path d="M735 336 h70"/><path d="M750 356 h40"/></g>
+              <rect width="900" height="470" fill="url(#shade)"/>
+            </svg>
+            <span class="tag">TITLE SECTION</span>
+            <div class="toolbar"><span class="on">Aa</span><span>Image</span><span>Video</span><span>Quote</span><span>Layout</span></div>
+            <div class="copy">
+              <div class="kicker">Travel · Chapter one</div>
+              <h1>The Long Way Home</h1>
+              <p>Four days along the western coast, told one stop at a time.</p>
+            </div>
+          </div>
+          <div class="text">
+            <p class="drop"><b>T</b>he road leaves the city before sunrise, and the first light finds it already climbing. By the time the fog lifts, the sea is on your right and stays there for the next three hundred kilometres.</p>
+          </div>
+        </div>
+      </main>
+
+      <aside class="props">
+        <div class="group">
+          <h3>Section settings</h3>
+          <div class="media"><span>Replace</span></div>
+          <div class="row"><span>Overlay</span><span class="mono" style="font-size:12px">40%</span></div>
+          <div class="slider"><i></i><b></b></div>
+          <div class="row"><span>Text position</span></div>
+          <div class="seg"><span class="on">Bottom</span><span>Middle</span><span>Top</span></div>
+          <div class="row"><span>Theme</span></div>
+          <div class="seg"><span>Light</span><span class="on">Dark</span><span>Auto</span></div>
+        </div>
+        <div class="group" style="border-top:1px solid var(--line);padding-top:16px">
+          <h3>Publishing</h3>
+          <span class="label">URL</span>
+          <div class="input">/stories/the-long-way-home</div>
+          <span class="label">Social title</span>
+          <div class="input" style="font-family:var(--sans);font-size:13px">The Long Way Home</div>
+          <div class="check"><i></i>Schedule for 09:00, Monday</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+</body>
+</html>

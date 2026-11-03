@@ -6,11 +6,14 @@ test.describe("about page", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Frontend engineer and UI architect",
     );
-    for (const name of ["How I work", "Career journey", "Areas of expertise"]) {
+    for (const name of ["Career journey", "Areas of expertise"]) {
       await expect(page.getByRole("region", { name })).toBeAttached();
     }
-    // Interests are hidden until provided.
-    await expect(page.getByRole("region", { name: /interests|outside work/i })).toHaveCount(0);
+    // Drafted copy was removed: there is no philosophy section without Sagar's own words.
+    await expect(page.getByRole("region", { name: "How I work" })).toHaveCount(0);
+    const interests = page.getByRole("region", { name: "Outside work" });
+    await expect(interests).toBeAttached();
+    await expect(interests.getByText("Cats, especially Persian cats")).toBeAttached();
     const resume = page
       .getByRole("region", { name: /resume/i })
       .getByRole("link", { name: /Download resume/ });
@@ -19,6 +22,16 @@ test.describe("about page", () => {
       "href",
       "/experience",
     );
+  });
+
+  test("shows the portrait with a description, loaded through next/image", async ({ page }) => {
+    await page.goto("/about");
+    const portrait = page.getByRole("img", { name: /Sagar Dixit outdoors/ });
+    await expect(portrait).toBeVisible();
+    await expect(portrait).toHaveAttribute("src", /_next\/image/);
+    expect(
+      await portrait.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0),
+    ).toBe(true);
   });
 
   test("has page metadata", async ({ page }) => {
@@ -39,15 +52,26 @@ test.describe("experience page", () => {
     const roles = page.locator("main ol > li");
     expect(await roles.count()).toBeGreaterThan(0);
 
-    const first = roles.first();
-    await expect(first.getByRole("heading", { level: 3 })).toBeVisible();
+    // Newest first.
+    await expect(roles.first().getByRole("heading", { level: 3 })).toHaveText("Freelance Engineer");
+    await expect(roles.last()).toContainText("Ninestack");
+
+    const airfi = roles.filter({ hasText: "AirFi.aero" });
+    await expect(airfi.getByRole("heading", { level: 3 })).toHaveText("Senior Frontend Engineer");
+    await expect(airfi.locator("time").first()).toHaveAttribute("dateTime", "2024-05");
     for (const label of ["Responsibilities", "Accomplishments", "Technologies"]) {
-      await expect(first.getByRole("heading", { level: 4, name: label })).toBeVisible();
+      await expect(airfi.getByRole("heading", { level: 4, name: label })).toBeVisible();
     }
-    // An entry without verified accomplishments omits the heading.
-    await expect(
-      roles.last().getByRole("heading", { level: 4, name: "Accomplishments" }),
-    ).toHaveCount(0);
+    // An entry without accomplishments omits the heading, and a current role says "Present".
+    const freelance = roles.first();
+    await expect(freelance.getByRole("heading", { level: 4, name: "Accomplishments" })).toHaveCount(
+      0,
+    );
+    await expect(freelance).toContainText("Present");
+
+    await expect(page.getByRole("region", { name: "Education and recognition" })).toContainText(
+      "Goa Engineering College",
+    );
   });
 
   test("is reachable from the navigation", async ({ page }) => {
@@ -65,113 +89,5 @@ test.describe("experience page", () => {
         .click();
     }
     await expect(page).toHaveURL(/\/experience$/);
-  });
-});
-
-test.describe("writing", () => {
-  test("lists articles with category, reading time and status", async ({ page }) => {
-    await page.goto("/writing");
-    await expect(page).toHaveTitle("Writing — Sagar Dixit");
-    const rows = page.locator("main ul > li a[href^='/writing/']");
-    await expect(rows).toHaveCount(6);
-    await expect(rows.first()).toContainText(/\d+ min read/);
-    await expect(rows.first()).toContainText(/Draft|\d{4}/);
-  });
-
-  test("filters by category and announces the result", async ({ page }) => {
-    await page.goto("/writing");
-    const group = page.getByRole("group", { name: "Filter by category" });
-    const rows = page.locator("main ul > li a[href^='/writing/']");
-
-    await expect(group.getByRole("button", { name: "All" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    await group.getByRole("button", { name: "Offline-first" }).click();
-    await expect(group.getByRole("button", { name: "Offline-first" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    await expect(group.getByRole("button", { name: "All" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
-    await expect(rows).toHaveCount(1);
-    await expect(rows.first()).toContainText("IndexedDB");
-    await expect(page.getByText("1 article shown")).toBeAttached();
-
-    await group.getByRole("button", { name: "All" }).click();
-    await expect(rows).toHaveCount(6);
-  });
-
-  test("filter works with the keyboard", async ({ page }) => {
-    await page.goto("/writing");
-    const button = page.getByRole("button", { name: "Performance" });
-    await button.focus();
-    await page.keyboard.press("Enter");
-    await expect(button).toHaveAttribute("aria-pressed", "true");
-    await expect(page.locator("main ul > li a[href^='/writing/']")).toHaveCount(1);
-  });
-
-  test("article page renders MDX with the design system", async ({ page }) => {
-    await page.goto("/writing");
-    await page
-      .getByRole("link", { name: /Managing real-time data with WebSockets in React/ })
-      .click();
-    await expect(page).toHaveURL(/\/writing\/real-time-data-with-websockets-in-react$/);
-
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Managing real-time data with WebSockets in React",
-    );
-    await expect(page.getByText(/\d+ min read/).first()).toBeVisible();
-    await expect(page.getByText("Real-time", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("Draft", { exact: true }).first()).toBeVisible();
-
-    const body = page.locator("article");
-    expect(await body.getByRole("heading", { level: 2 }).count()).toBeGreaterThanOrEqual(3);
-    const code = body.locator("pre[tabindex='0']").first();
-    await expect(code).toContainText("class Connection");
-    await code.focus();
-    await expect(code).toBeFocused();
-    await expect(body.locator("ul li").first()).toBeVisible();
-
-    await expect(
-      page.getByRole("region", { name: "More writing" }).locator("a[href^='/writing/']"),
-    ).toHaveCount(2);
-  });
-
-  test("article metadata marks drafts as noindex", async ({ page }) => {
-    await page.goto("/writing/offline-first-applications-with-indexeddb");
-    await expect(page).toHaveTitle("Offline-first applications with IndexedDB — Sagar Dixit");
-    await expect(page.locator("meta[name='robots']")).toHaveAttribute("content", /noindex/);
-    await expect(page.locator("meta[property='og:type']")).toHaveAttribute("content", "article");
-    await expect(page.locator("meta[property='article:section']")).toHaveAttribute(
-      "content",
-      "Offline-first",
-    );
-    await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
-      "href",
-      /\/writing\/offline-first-applications-with-indexeddb$/,
-    );
-  });
-
-  test("unknown articles return 404", async ({ page }) => {
-    const response = await page.goto("/writing/does-not-exist");
-    expect(response?.status()).toBe(404);
-  });
-
-  test("pages do not scroll horizontally", async ({ page }) => {
-    for (const path of [
-      "/about",
-      "/experience",
-      "/writing",
-      "/writing/react-performance-optimization",
-    ]) {
-      await page.goto(path);
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      );
-      expect(overflow, path).toBeLessThanOrEqual(0);
-    }
   });
 });

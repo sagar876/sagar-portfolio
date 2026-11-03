@@ -18,6 +18,8 @@ export type ImageAsset = {
   /** Intrinsic size in pixels; sets the aspect ratio and prevents layout shift. */
   width: number;
   height: number;
+  /** True for drawn or mocked-up scenes (not real screenshots). Shown with an "Illustration" label. */
+  illustration?: boolean;
 };
 
 /* -------------------------------------------------------------------------- */

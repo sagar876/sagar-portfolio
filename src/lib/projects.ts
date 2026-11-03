@@ -40,9 +40,16 @@ export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);
 }
 
+/** Projects shown in listings (work index, related links, sitemap). */
+export function getListedProjects(): Project[] {
+  return projects.filter((project) => project.listed !== false);
+}
+
 /** Homepage selection: up to four featured projects. */
 export function getFeaturedProjects(): Project[] {
-  return projects.filter((project) => project.featured).slice(0, 4);
+  return getListedProjects()
+    .filter((project) => project.featured)
+    .slice(0, 4);
 }
 
 /** Explicitly related projects, or the next projects in the list (wrapping). */
@@ -53,8 +60,9 @@ export function getRelatedProjects(project: Project, limit = 2): Project[] {
       .filter((p): p is Project => p !== undefined)
       .slice(0, limit);
   }
-  const index = projects.indexOf(project);
-  const others = [...projects.slice(index + 1), ...projects.slice(0, index)];
+  const listed = getListedProjects();
+  const index = listed.indexOf(project);
+  const others = index === -1 ? listed : [...listed.slice(index + 1), ...listed.slice(0, index)];
   return others.slice(0, limit);
 }
 

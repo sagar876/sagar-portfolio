@@ -14,7 +14,7 @@ export type ProjectLink = {
 };
 
 /** Kept for card previews; a 16:10 crop of the cover is used. */
-export type ProjectImage = Pick<ImageAsset, "src" | "alt">;
+export type ProjectImage = Pick<ImageAsset, "src" | "alt" | "illustration">;
 
 export type Project = {
   slug: string;
@@ -38,6 +38,11 @@ export type Project = {
   stack: string[];
   /** Shown on the homepage. Keep to 3–4 projects. */
   featured?: boolean;
+  /**
+   * Set false to keep a page reachable by URL but out of every listing,
+   * related links and the sitemap (used for the case-study template).
+   */
+  listed?: boolean;
   /** Preview image (cards, case-study hero, social sharing). Without it, a neutral placeholder panel is shown. */
   cover?: ImageAsset;
   /** Public links only: live product, repository, talk. */
@@ -70,36 +75,3 @@ export type ExperienceEntry = {
   accomplishments?: string[];
   technologies?: string[];
 };
-
-export const articleCategories = [
-  "Architecture",
-  "Offline-first",
-  "Real-time",
-  "Design systems",
-  "Performance",
-  "Accessibility",
-] as const;
-
-export type ArticleCategory = (typeof articleCategories)[number];
-
-type ArticleBase = {
-  /** Also the MDX filename: src/content/writing/<slug>.mdx */
-  slug: string;
-  title: string;
-  /** One or two sentences for the listing and search results. */
-  summary: string;
-  category: ArticleCategory;
-  /** ISO date of the last substantial update. */
-  updatedAt?: string;
-};
-
-/**
- * `draft`: visible with a "Draft" label and excluded from search engines.
- * `published`: requires a publication date.
- */
-export type Article =
-  | (ArticleBase & { status: "draft"; publishedAt?: undefined })
-  | (ArticleBase & {
-      status: "published";
-      /** ISO date, e.g. "2026-11-02". */ publishedAt: string;
-    });

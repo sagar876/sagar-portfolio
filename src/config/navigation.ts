@@ -5,7 +5,6 @@ export const mainNav: readonly NavItem[] = [
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
   { label: "Experience", href: "/experience" },
-  { label: "Writing", href: "/writing" },
   { label: "Contact", href: "/contact" },
 ];
 

@@ -13,15 +13,3 @@ export function isIsoMonth(value: string): boolean {
 export function formatMonth(value: string): string {
   return isIsoMonth(value) ? monthFormatter.format(new Date(`${value}-01T00:00:00Z`)) : value;
 }
-
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** "2026-11-02" → "2 Nov 2026". */
-export function formatDate(isoDate: string): string {
-  return dateFormatter.format(new Date(`${isoDate}T00:00:00Z`));
-}

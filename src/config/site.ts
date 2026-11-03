@@ -31,27 +31,27 @@ export const siteConfig = {
   name: "Sagar Dixit",
   role: "Senior Frontend Engineer & UI Architect",
   description:
-    "Senior Frontend Engineer and UI Architect with 8 years of experience in React, Next.js and TypeScript. Frontend architecture, micro-frontends, real-time and offline-first applications, performance and design systems.",
+    "Senior Frontend Engineer and UI Architect with 9+ years designing scalable React, Next.js and TypeScript platforms across travel, FinTech, ecommerce and SaaS. Frontend architecture, real-time and offline-first systems, design systems and performance.",
   url: resolveSiteUrl(),
   locale: "en_US",
-  /** Path under /public. Add the PDF at public/resume/ before launch. */
-  resumePath: "/resume/sagar-dixit-resume.pdf",
-  /**
-   * [Placeholder] Availability line shown in the hero, e.g. "Open to senior
-   * frontend roles". Only set this once it is true; undefined hides it.
-   */
-  availability: undefined as string | undefined,
+  /** Portrait in /public/images/profile (cropped 4:5, metadata stripped). */
+  portrait: {
+    src: "/images/profile/sagar-dixit.jpg",
+    alt: "Sagar Dixit outdoors under a cloudy sky, wearing a cap and a brown leather jacket.",
+    width: 960,
+    height: 1200,
+  },
+  /** Resume in /public/resume, used by every "Resume" and "Download resume" link. */
+  resumePath: "/resume/Sagar_Dixit_UI_Architect.pdf",
+  /** Shown as a badge in the hero. From the resume: immediate joiner, open to relocation. */
+  availability: "Available immediately · Open to relocation" as string | undefined,
   contact: {
-    /** [Placeholder] Public contact email. */
-    email: undefined as string | undefined,
-    /** [Placeholder] e.g. "[City, Country]". */
-    location: undefined as string | undefined,
+    email: "sagar876@gmail.com" as string | undefined,
+    location: "Goa, India" as string | undefined,
   },
   social: {
-    /** [Placeholder] Full GitHub profile URL. */
-    github: undefined as string | undefined,
-    /** [Placeholder] Full LinkedIn profile URL. */
-    linkedin: undefined as string | undefined,
+    github: "https://github.com/sagar876" as string | undefined,
+    linkedin: "https://www.linkedin.com/in/sagar-dixit-2055a7124" as string | undefined,
   },
 } as const;
 

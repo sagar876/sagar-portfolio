@@ -1,0 +1,58 @@
+/* Shared canvas for project illustrations: 1600×1000 CSS px, rendered at 1.5× → 2400×1500. */
+:root {
+  --canvas: #ecebe5;
+  --window: #ffffff;
+  --panel: #f7f7f4;
+  --line: #e4e4de;
+  --ink: #111214;
+  --ink-2: #55585e;
+  --ink-3: #8a8c91;
+  --accent: #2340f5;
+  --accent-soft: #e6eaff;
+  --good: #1f8a4c;
+  --good-soft: #e3f4ea;
+  --warn: #b26a00;
+  --warn-soft: #fbefd9;
+  --bad: #c62a22;
+  --bad-soft: #fbe4e2;
+  --sans: "Schibsted Grotesk", system-ui, sans-serif;
+  --serif: "Newsreader", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1600px; height: 1000px; overflow: hidden; }
+body {
+  background: var(--canvas);
+  font-family: var(--sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  display: grid;
+  place-items: center;
+}
+.window {
+  width: 1504px;
+  height: 904px;
+  background: var(--window);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 24px 60px -20px rgba(17,18,20,.28);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 40px 1fr;
+}
+.chrome {
+  display: flex; align-items: center; gap: 8px; padding: 0 16px;
+  background: #f4f4f1; border-bottom: 1px solid var(--line);
+}
+.chrome i { width: 11px; height: 11px; border-radius: 50%; background: #d9d8d2; display: block; }
+.chrome .url {
+  margin-left: 18px; height: 24px; width: 360px; border-radius: 6px; background: #fff;
+  border: 1px solid var(--line); font: 500 12px var(--mono); color: var(--ink-3);
+  display: flex; align-items: center; padding: 0 10px;
+}
+.mono { font-family: var(--mono); }
+.label { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font: 600 12px var(--sans); }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 8px; font: 600 14px var(--sans); }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.ghost { border: 1px solid var(--line); color: var(--ink); background: #fff; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 12px; }

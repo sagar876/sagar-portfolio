@@ -90,12 +90,17 @@ export function CaseStudyHeader({ project }: { project: Project }) {
       {project.cover && (
         // Same name as the project card's preview, so the image morphs between pages.
         <ViewTransition name={coverTransitionName(project.slug)} share="morph" default="none">
-          <div>
+          <figure>
             <CaseStudyImage
               image={{ ...project.cover }}
               sizes="(min-width: 90rem) 84rem, calc(100vw - 2.5rem)"
             />
-          </div>
+            {project.cover.illustration && (
+              <figcaption className="mt-3 font-mono text-label text-fg-muted uppercase">
+                Illustration · invented sample data, not a screenshot of the real product
+              </figcaption>
+            )}
+          </figure>
         </ViewTransition>
       )}
     </header>

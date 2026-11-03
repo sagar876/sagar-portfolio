@@ -6,10 +6,10 @@
 export const heroContent = {
   positioning: "Senior Frontend Engineer / UI Architect",
   intro:
-    "I design and build the frontend architecture of React and Next.js products: micro-frontends, real-time WebSocket interfaces, offline-first applications, and the design systems that keep them consistent.",
+    "I design scalable React, Next.js and TypeScript platforms. Most recently I owned frontend architecture for global airline platforms at AirFi: an offline-first sync engine, a real-time WebSocket layer and platform-wide access control.",
   primaryCta: { label: "Explore my work", href: "#selected-work" },
   facts: [
-    { term: "Experience", value: "8 years" },
+    { term: "Experience", value: "9+ years" },
     { term: "Focus", value: "Frontend architecture" },
     { term: "Stack", value: "React, Next.js, TypeScript" },
   ],
@@ -18,7 +18,7 @@ export const heroContent = {
 export const workContent = {
   title: "Selected work",
   description:
-    "Case studies on architecture decisions, the constraints behind them and what changed.",
+    "Products and platforms I've built, from airline operations and finance to publishing and fitness.",
   allWorkLabel: "All work",
 } as const;
 
@@ -31,19 +31,9 @@ export const capabilitiesContent = {
   title: "Engineering capabilities",
 } as const;
 
-/**
- * DRAFT — written from the positioning brief as a starting point.
- * Replace with your own words before launch.
- */
-export const philosophyContent = {
-  label: "Approach",
-  statement:
-    "Interfaces outlive the sprint they ship in. I build them to be read, changed and handed over: clear boundaries between parts, components that carry their own accessibility, and performance budgets set before the first feature rather than after the last.",
-} as const;
-
 export const aboutPreviewContent = {
   title: "About",
-  body: "I'm a Senior Frontend Engineer and UI Architect with 8 years of experience in React, Next.js, TypeScript and JavaScript. My work centres on frontend architecture and the systems around it: micro-frontends, real-time and offline-first applications, performance, design systems and engineering standards for accessibility.",
+  body: "I'm a Senior Frontend Engineer and UI Architect with 9+ years of experience across travel, FinTech, ecommerce and SaaS. I've led frontend architecture for global airline platforms at AirFi, built a company-wide component library at Fabric, and cut a legacy portal's load time from ~7–8s to 2–3s.",
   linkLabel: "More about me",
 } as const;
 

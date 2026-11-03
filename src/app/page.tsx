@@ -5,7 +5,6 @@ import { Capabilities } from "@/components/sections/home/capabilities";
 import { ContactCta } from "@/components/sections/home/contact-cta";
 import { Experience } from "@/components/sections/home/experience";
 import { Hero } from "@/components/sections/home/hero";
-import { Philosophy } from "@/components/sections/home/philosophy";
 import { SelectedWork } from "@/components/sections/home/selected-work";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -18,7 +17,6 @@ export default function HomePage() {
       <SelectedWork />
       <Experience />
       <Capabilities />
-      <Philosophy />
       <AboutPreview />
       <ContactCta />
     </>

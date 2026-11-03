@@ -4,7 +4,7 @@ import { ProjectList } from "@/components/content/project-card";
 import { Section } from "@/components/layout/section";
 import { PageIntro } from "@/components/sections/page-intro";
 import { Text } from "@/components/ui/typography";
-import { getAllProjects } from "@/lib/projects";
+import { getListedProjects } from "@/lib/projects";
 import { createPageMetadata } from "@/lib/metadata";
 
 const description =
@@ -17,7 +17,7 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function WorkPage() {
-  const projects = getAllProjects();
+  const projects = getListedProjects();
 
   return (
     <>

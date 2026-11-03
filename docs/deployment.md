@@ -27,7 +27,6 @@ Status legend: **[done]** verified in the repository · **[you]** needs your acc
 
 ### Before the first push
 
-- [ ] Replace placeholder content you want live (`src/config/site.ts`, `src/content/**`), or accept that example projects and draft articles stay labelled and `noindex`.
 - [ ] Add the resume at `public/resume/sagar-dixit-resume.pdf` (download links 404 without it).
 
 ---

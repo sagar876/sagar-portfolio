@@ -1,4 +1,5 @@
 import { type Metadata } from "next";
+import Image from "next/image";
 
 import { ExperienceList } from "@/components/content/experience-item";
 import { Grid, GridItem } from "@/components/layout/grid";
@@ -8,17 +9,17 @@ import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Heading, Label, Text } from "@/components/ui/typography";
 import { resumeLink } from "@/config/navigation";
+import { siteConfig } from "@/config/site";
 import {
   aboutExpertise,
   aboutInterests,
   aboutIntro,
   aboutJourney,
-  aboutPhilosophy,
   aboutResume,
 } from "@/content/about";
 import { experience } from "@/content/experience";
 import { capabilities } from "@/data/capabilities";
-import { coreStack } from "@/data/stack";
+import { skillGroups } from "@/data/stack";
 import { createPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createPageMetadata({
@@ -30,35 +31,28 @@ export const metadata: Metadata = createPageMetadata({
 export default function AboutPage() {
   return (
     <>
-      <PageIntro eyebrow="About" title={aboutIntro.title} lead={aboutIntro.lead}>
+      <PageIntro
+        eyebrow="About"
+        title={aboutIntro.title}
+        lead={aboutIntro.lead}
+        media={
+          <Image
+            src={siteConfig.portrait.src}
+            alt={siteConfig.portrait.alt}
+            width={siteConfig.portrait.width}
+            height={siteConfig.portrait.height}
+            priority
+            sizes="(min-width: 64rem) 20rem, (min-width: 40rem) 18rem, 70vw"
+            className="h-auto w-full max-w-72 bg-surface desktop:max-w-full"
+          />
+        }
+      >
         {aboutIntro.body.map((paragraph) => (
           <Text key={paragraph} size="lg" family="serif" measure>
             {paragraph}
           </Text>
         ))}
       </PageIntro>
-
-      {/* Engineering philosophy */}
-      <Section divider labelledBy="philosophy-title">
-        <SectionHeading id="philosophy-title" label="Approach" title={aboutPhilosophy.title} />
-        <Grid rowGap="lg">
-          <GridItem span="main" className="desktop:col-end-12">
-            <p className="font-serif text-h1 font-normal text-fg">{aboutPhilosophy.statement}</p>
-          </GridItem>
-          <GridItem span="main">
-            <ul className="grid gap-x-gutter gap-y-10 tablet:grid-cols-2">
-              {aboutPhilosophy.principles.map((principle) => (
-                <li key={principle.title} className="flex flex-col gap-3 border-t border-fg pt-5">
-                  <Heading level={3} size="h4">
-                    {principle.title}
-                  </Heading>
-                  <Text tone="secondary">{principle.text}</Text>
-                </li>
-              ))}
-            </ul>
-          </GridItem>
-        </Grid>
-      </Section>
 
       {/* Career journey */}
       <Section divider labelledBy="journey-title">
@@ -103,12 +97,29 @@ export default function AboutPage() {
             </li>
           ))}
         </ul>
-        <Grid className="pt-10">
-          <GridItem span="main" className="flex flex-col gap-2">
-            <Label as="p">Core stack</Label>
-            <p className="text-body-lg text-fg">{coreStack.join(" · ")}</p>
-          </GridItem>
-        </Grid>
+        <div className="pt-16">
+          <SectionHeading
+            id="skills-title"
+            label="Toolkit"
+            title="Skills and tools"
+            level={3}
+            size="h2"
+          />
+          <Grid rowGap="none">
+            <GridItem span="main">
+              <dl className="grid gap-x-gutter gap-y-8 tablet:grid-cols-2 wide:grid-cols-3">
+                {skillGroups.map(({ group, skills }) => (
+                  <div key={group} className="flex flex-col gap-2 border-t border-fg pt-4">
+                    <Label as="dt" tone="primary">
+                      {group}
+                    </Label>
+                    <dd className="text-small text-fg-secondary">{skills.join(" · ")}</dd>
+                  </div>
+                ))}
+              </dl>
+            </GridItem>
+          </Grid>
+        </div>
       </Section>
 
       {/* Personal interests — only rendered when provided */}

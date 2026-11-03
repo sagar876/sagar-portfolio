@@ -11,6 +11,8 @@ type ProjectPreviewProps = {
   priority?: boolean;
   /** Shared view-transition name; the same name on the destination page morphs the image. */
   transitionName?: string;
+  /** Responsive `sizes` for the image; defaults to full container width. */
+  sizes?: string;
   className?: string;
 };
 
@@ -23,6 +25,7 @@ export function ProjectPreview({
   image,
   priority = false,
   transitionName,
+  sizes = "(min-width: 90rem) 82rem, calc(100vw - 2.5rem)",
   className,
 }: ProjectPreviewProps) {
   const preview = (
@@ -33,10 +36,16 @@ export function ProjectPreview({
           alt={image.alt}
           fill
           priority={priority}
-          sizes="(min-width: 90rem) 82rem, calc(100vw - 2.5rem)"
+          sizes={sizes}
           className="object-cover transition-transform duration-page ease-standard group-hover/card:scale-102"
         />
-      ) : (
+      ) : null}
+      {image?.illustration && (
+        <span className="absolute bottom-3 left-3 bg-background/90 px-2 py-1 font-mono text-label text-fg uppercase">
+          Illustration
+        </span>
+      )}
+      {!image && (
         <div aria-hidden="true" className="absolute inset-0 grid place-items-center">
           <Label>[Project preview]</Label>
         </div>

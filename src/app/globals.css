@@ -238,6 +238,7 @@
   /* --- Media aspect ratios --- */
   --aspect-cover: 16 / 10; /* featured project images */
   --aspect-thumb: 4 / 3; /* thumbnails */
+  --aspect-photo: 4 / 5; /* profile photo */
 
   /* --- Motion --- */
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);

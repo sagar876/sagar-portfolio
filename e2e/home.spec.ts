@@ -32,7 +32,6 @@ test.describe("homepage content", () => {
       "Selected work",
       "Experience",
       "Engineering capabilities",
-      "Approach",
       "About",
       "Hiring a senior frontend engineer?",
     ]) {
@@ -67,7 +66,7 @@ test.describe("homepage content", () => {
     const resumeLinks = page.locator("a[download]");
     expect(await resumeLinks.count()).toBeGreaterThan(0);
     for (const link of await resumeLinks.all()) {
-      await expect(link).toHaveAttribute("href", "/resume/sagar-dixit-resume.pdf");
+      await expect(link).toHaveAttribute("href", "/resume/Sagar_Dixit_UI_Architect.pdf");
     }
   });
 

@@ -1,4 +1,3 @@
-import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 /**
@@ -39,7 +38,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-/** Compiles .mdx imports (articles in src/content/writing). Components are mapped in src/mdx-components.tsx. */
-const withMDX = createMDX({});
-
-export default withMDX(nextConfig);
+export default nextConfig;

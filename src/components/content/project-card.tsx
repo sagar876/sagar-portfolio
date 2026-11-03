@@ -2,7 +2,6 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { ProjectPreview } from "@/components/content/project-preview";
-import { Grid, GridItem } from "@/components/layout/grid";
 import { Badge } from "@/components/ui/badge";
 import { Heading, type HeadingLevel, Label, Text } from "@/components/ui/typography";
 import { coverTransitionName, projectHref } from "@/lib/projects";
@@ -58,57 +57,52 @@ function FeaturedCard({ project, headingLevel }: { project: Project; headingLeve
   const titleId = `project-${project.slug}`;
 
   return (
-    <article aria-labelledby={titleId} className="group/card flex flex-col gap-6 desktop:gap-10">
+    <article aria-labelledby={titleId} className="group/card flex flex-col gap-6">
       {/* Duplicate of the case-study link for pointer users; hidden from keyboard and screen readers. */}
       <Link href={href} tabIndex={-1} aria-hidden="true" className="block reveal-on-scroll">
-        <ProjectPreview image={project.cover} transitionName={coverTransitionName(project.slug)} />
+        <ProjectPreview
+          image={project.cover}
+          transitionName={coverTransitionName(project.slug)}
+          sizes="(min-width: 90rem) 40rem, (min-width: 64rem) 45vw, calc(100vw - 2.5rem)"
+        />
       </Link>
-      <Grid rowGap="sm">
-        <GridItem span="rail" className="flex flex-col gap-1">
-          <Label as="p" tone="primary">
-            {project.category}
-          </Label>
-          {project.timeline && <Label as="p">{project.timeline}</Label>}
-          {project.status === "example" && (
-            <Badge variant="subtle" className="mt-2 self-start">
-              Example
-            </Badge>
-          )}
-        </GridItem>
-        <GridItem span="main" className="flex flex-col gap-5 desktop:col-end-12">
-          <Heading level={headingLevel} size="h1" id={titleId}>
-            {project.title}
-          </Heading>
-          <Text size="lg" tone="secondary" measure>
-            {project.summary}
-          </Text>
-          <ul aria-label="Technologies" className="flex flex-wrap gap-x-3 gap-y-1">
-            {project.stack.map((tech, index) => (
-              <li key={`${index}-${tech}`} className="flex items-center gap-3">
-                {index > 0 && (
-                  <span aria-hidden="true" className="text-fg-muted">
-                    /
-                  </span>
-                )}
-                <Label>{tech}</Label>
-              </li>
-            ))}
-          </ul>
-          <div>
-            <Link
-              href={href}
-              className="inline-flex min-h-11 items-center gap-2 text-body font-medium underline decoration-current decoration-1 underline-offset-4 transition-colors duration-micro ease-standard group-hover/card:decoration-accent active:text-fg-secondary"
-            >
-              Read case study<span className="sr-only">: {project.title}</span>
-              <ArrowRight
-                aria-hidden="true"
-                strokeWidth={1.75}
-                className="size-4 transition-transform duration-micro ease-standard group-hover/card:translate-x-1"
-              />
-            </Link>
-          </div>
-        </GridItem>
-      </Grid>
+      <div className="flex flex-col gap-4">
+        <Label as="p">
+          <span className="text-fg">{project.category}</span>
+          {project.timeline && ` · ${project.timeline}`}
+        </Label>
+        <Heading level={headingLevel} size="h2" id={titleId}>
+          {project.title}
+        </Heading>
+        <Text tone="secondary" measure>
+          {project.summary}
+        </Text>
+        <ul aria-label="Technologies" className="flex flex-wrap gap-x-3 gap-y-1">
+          {project.stack.map((tech, index) => (
+            <li key={`${index}-${tech}`} className="flex items-center gap-3">
+              {index > 0 && (
+                <span aria-hidden="true" className="text-fg-muted">
+                  /
+                </span>
+              )}
+              <Label>{tech}</Label>
+            </li>
+          ))}
+        </ul>
+        <div>
+          <Link
+            href={href}
+            className="inline-flex min-h-11 items-center gap-2 text-body font-medium underline decoration-current decoration-1 underline-offset-4 transition-colors duration-micro ease-standard group-hover/card:decoration-accent active:text-fg-secondary"
+          >
+            Read case study<span className="sr-only">: {project.title}</span>
+            <ArrowRight
+              aria-hidden="true"
+              strokeWidth={1.75}
+              className="size-4 transition-transform duration-micro ease-standard group-hover/card:translate-x-1"
+            />
+          </Link>
+        </div>
+      </div>
     </article>
   );
 }

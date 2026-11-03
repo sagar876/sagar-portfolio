@@ -43,11 +43,7 @@ const opacityOf = (page: Page, selector: string) =>
     });
 
 test.describe("performance and stability", () => {
-  for (const path of [
-    "/",
-    "/work/example-project-one",
-    "/writing/react-performance-optimization",
-  ]) {
+  for (const path of ["/", "/work/airfi-offline-sync", "/about"]) {
     test(`no layout shift while loading and scrolling ${path}`, async ({ page }) => {
       await trackLayoutShift(page);
       await page.goto(path);
@@ -60,7 +56,9 @@ test.describe("performance and stability", () => {
     });
   }
 
-  test("Motion is only in the initial bundle of the page that uses it", async ({ page }) => {
+  test("Motion is not in any page's initial bundle (the mobile menu loads it on demand)", async ({
+    page,
+  }) => {
     // "dragSnapToOrigin" survives minification in Motion bundles.
     // Read the server HTML, not the live DOM: after load, prefetching and
     // idle loading add script tags that aren't part of the initial bundle.
@@ -72,10 +70,9 @@ test.describe("performance and stability", () => {
       return bodies.some((body) => body.includes("dragSnapToOrigin"));
     };
     expect(await motionInInitialBundle("/")).toBe(false);
-    expect(await motionInInitialBundle("/work/example-project-one")).toBe(false);
+    expect(await motionInInitialBundle("/work/airfi-offline-sync")).toBe(false);
     expect(await motionInInitialBundle("/about")).toBe(false);
-    // The writing filter uses Motion for its list animation.
-    expect(await motionInInitialBundle("/writing")).toBe(true);
+    expect(await motionInInitialBundle("/contact")).toBe(false);
   });
 });
 
@@ -96,11 +93,9 @@ test.describe("without JavaScript", () => {
     await expect.poll(() => opacityOf(page, "#capabilities-title"), { timeout: 3000 }).toBe(1);
   });
 
-  test("writing list and case study render all content", async ({ page }) => {
-    await page.goto("/writing");
-    await expect(page.locator("main ul > li a[href^='/writing/']")).toHaveCount(6);
-    await page.goto("/work/example-project-one");
-    await expect(page.locator("article section > h2")).toHaveCount(13);
+  test("case studies render all content", async ({ page }) => {
+    await page.goto("/work/airfi-offline-sync");
+    await expect(page.locator("article section > h2")).toHaveCount(5);
     // Contents disclosure is a native <details>, so it works without JS too.
     if (!isDesktop(page)) {
       await page.locator("details summary", { hasText: "Contents" }).click();
@@ -129,7 +124,7 @@ test.describe("reduced motion", () => {
   });
 
   test("keeps reading progress, which only mirrors scrolling", async ({ page }) => {
-    await page.goto("/work/example-project-one");
+    await page.goto("/work/airfi-offline-sync");
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight / 2));
     await expect
       .poll(() =>
@@ -145,7 +140,7 @@ test.describe("interactions", () => {
   test("reading progress fills as the page scrolls and is hidden from assistive tech", async ({
     page,
   }) => {
-    await page.goto("/writing/offline-first-applications-with-indexeddb");
+    await page.goto("/work/airfi-realtime-platform");
     const bar = page.locator("[data-reading-progress]");
     await expect(bar).toHaveAttribute("aria-hidden", "true");
     const scale = () => bar.evaluate((node) => new DOMMatrix(getComputedStyle(node).transform).a);
@@ -174,7 +169,7 @@ test.describe("interactions", () => {
       .getByRole("link", { name: /Read case study/ })
       .first()
       .click();
-    await expect(page).toHaveURL(/\/work\/example-project-one$/);
+    await expect(page).toHaveURL(/\/work\/[a-z0-9-]+$/);
     expect(await page.evaluate(() => (window as unknown as { __vt: number }).__vt)).toBeGreaterThan(
       0,
     );
@@ -194,14 +189,24 @@ test.describe("interactions", () => {
     await expect.poll(width).toBe("100% 1px");
   });
 
-  test("featured card hover scales the image and nudges the call to action", async ({ page }) => {
+  test("featured card hover nudges the call to action (and scales the image, if any)", async ({
+    page,
+  }) => {
     test.skip(!isDesktop(page), "Hover is a pointer interaction");
     await page.goto("/");
     const card = page.locator("#selected-work article").first();
-    const image = card.locator("img").first();
+    const arrow = card.getByRole("link", { name: /Read case study/ }).locator("svg");
     await card.scrollIntoViewIfNeeded();
     await card.getByRole("heading").hover();
-    await expect.poll(() => image.evaluate((node) => getComputedStyle(node).scale)).toBe("1.02");
+    await expect
+      .poll(() => arrow.evaluate((node) => getComputedStyle(node).translate))
+      .not.toBe("none");
+    const image = card.locator("img");
+    if (await image.count()) {
+      await expect
+        .poll(() => image.first().evaluate((node) => getComputedStyle(node).scale))
+        .toBe("1.02");
+    }
   });
 
   test("mobile menu links spring in, then exit before the dialog closes", async ({ page }) => {
@@ -248,13 +253,13 @@ test.describe("interactions", () => {
 
   test("contents marker follows the section being read", async ({ page }) => {
     test.skip(!isDesktop(page), "Desktop only");
-    await page.goto("/work/example-project-one");
+    await page.goto("/work/airfi-offline-sync");
     const toc = page.getByRole("navigation", { name: "Contents" });
     const marker = toc.locator("[data-contents-marker]");
     await expect(marker).toHaveCount(1);
 
-    await page.evaluate(() => document.getElementById("decisions")?.scrollIntoView());
-    const active = toc.getByRole("link", { name: "Key decisions" });
+    await page.evaluate(() => document.getElementById("architecture")?.scrollIntoView());
+    const active = toc.getByRole("link", { name: "Architecture" });
     await expect(active).toHaveAttribute("aria-current", "location");
 
     // The marker settles beside the active link (after its transition).
@@ -265,16 +270,5 @@ test.describe("interactions", () => {
         return Math.abs(m.y + m.height / 2 - (a.y + a.height / 2));
       })
       .toBeLessThan(2);
-  });
-
-  test("writing filter animates rows without losing content", async ({ page }) => {
-    await page.goto("/writing");
-    const rows = page.locator("main ul > li a[href^='/writing/']");
-    await page.getByRole("button", { name: "Accessibility" }).click();
-    await expect(rows).toHaveCount(1);
-    await expect.poll(() => opacityOf(page, "main ul > li")).toBe(1);
-    await page.getByRole("button", { name: "All" }).click();
-    await expect(rows).toHaveCount(6);
-    await expect.poll(() => opacityOf(page, "main ul > li:last-child")).toBe(1);
   });
 });
