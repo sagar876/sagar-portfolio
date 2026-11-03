@@ -33,7 +33,7 @@ export function Hero() {
     <Section
       spacing="none"
       labelledBy="hero-title"
-      className="pt-16 pb-section tablet:pt-24 desktop:pt-32"
+      className="pt-16 pb-section-compact tablet:pt-24 desktop:pt-32"
     >
       <Grid rowGap="lg" className="desktop:items-start">
         {/* Text column */}

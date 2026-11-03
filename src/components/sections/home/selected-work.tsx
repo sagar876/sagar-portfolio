@@ -9,7 +9,12 @@ export function SelectedWork() {
   if (featuredProjects.length === 0) return null;
 
   return (
-    <Section id="selected-work" labelledBy="selected-work-title" divider>
+    <Section
+      id="selected-work"
+      labelledBy="selected-work-title"
+      divider
+      className="pt-section-compact"
+    >
       <SectionHeading
         id="selected-work-title"
         label="Work"
