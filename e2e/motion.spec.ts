@@ -19,15 +19,6 @@ async function trackLayoutShift(page: Page) {
 const readLayoutShift = (page: Page) =>
   page.evaluate(() => (window as unknown as { __cls: number }).__cls);
 
-/** Script URLs referenced by the server-rendered HTML (the initial bundle). */
-async function initialScripts(page: Page, path: string) {
-  const html = await page.request.get(path).then((r) => r.text());
-  const base = new URL(path, test.info().project.use.baseURL);
-  return [...html.matchAll(/<script[^>]+src="([^"]+)"/g)].map(
-    (match) => new URL(match[1]!, base).href,
-  );
-}
-
 const opacityOf = (page: Page, selector: string) =>
   page
     .locator(selector)
@@ -55,25 +46,6 @@ test.describe("performance and stability", () => {
       expect(await readLayoutShift(page)).toBeLessThan(0.01);
     });
   }
-
-  test("Motion is not in any page's initial bundle (the mobile menu loads it on demand)", async ({
-    page,
-  }) => {
-    // "dragSnapToOrigin" survives minification in Motion bundles.
-    // Read the server HTML, not the live DOM: after load, prefetching and
-    // idle loading add script tags that aren't part of the initial bundle.
-    const motionInInitialBundle = async (path: string) => {
-      const srcs = await initialScripts(page, path);
-      const bodies = await Promise.all(
-        srcs.map((src) => page.request.get(src).then((r) => r.text())),
-      );
-      return bodies.some((body) => body.includes("dragSnapToOrigin"));
-    };
-    expect(await motionInInitialBundle("/")).toBe(false);
-    expect(await motionInInitialBundle("/work/airfi-offline-sync")).toBe(false);
-    expect(await motionInInitialBundle("/about")).toBe(false);
-    expect(await motionInInitialBundle("/contact")).toBe(false);
-  });
 });
 
 test.describe("without JavaScript", () => {
@@ -207,48 +179,6 @@ test.describe("interactions", () => {
         .poll(() => image.first().evaluate((node) => getComputedStyle(node).scale))
         .toBe("1.02");
     }
-  });
-
-  test("mobile menu links spring in, then exit before the dialog closes", async ({ page }) => {
-    test.skip(isDesktop(page), "Mobile only");
-    await page.goto("/");
-    // Let the idle prefetch bring in the Motion layer.
-    await page.waitForLoadState("networkidle");
-    await page.getByRole("button", { name: "Open menu" }).click();
-    const dialog = page.getByRole("dialog", { name: "Menu" });
-    const firstItem = dialog.locator("nav ul li").first();
-
-    // Mid-entrance the item is offset; it settles at rest.
-    await expect
-      .poll(() => firstItem.evaluate((node) => getComputedStyle(node).transform), { timeout: 3000 })
-      .toMatch(/^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
-    await expect.poll(() => opacityOf(page, "#mobile-menu nav ul li")).toBe(1);
-
-    await page.keyboard.press("Escape");
-    // The dialog stays open briefly for the exit animation, then closes.
-    await expect(dialog).toBeHidden();
-    await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
-  });
-
-  test("mobile menu still works if the Motion layer fails to load", async ({ page }) => {
-    test.skip(isDesktop(page), "Mobile only");
-    const initial = new Set((await initialScripts(page, "/")).map((src) => new URL(src).pathname));
-    // Block every script that isn't part of the initial page (lazy chunks, prefetches).
-    await page.route("**/_next/static/chunks/**", (route) => {
-      const { pathname } = new URL(route.request().url());
-      return !pathname.endsWith(".js") || initial.has(pathname) ? route.continue() : route.abort();
-    });
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    await page.getByRole("button", { name: "Open menu" }).click();
-    const dialog = page.getByRole("dialog", { name: "Menu" });
-    await expect(dialog.getByRole("link", { name: "Work" })).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(dialog).toBeHidden();
-    await page.getByRole("button", { name: "Open menu" }).click();
-    await dialog.getByRole("button", { name: "Close menu" }).click();
-    await expect(dialog).toBeHidden();
   });
 
   test("contents marker follows the section being read", async ({ page }) => {

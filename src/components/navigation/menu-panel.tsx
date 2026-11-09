@@ -1,5 +1,4 @@
 import { Download, X } from "lucide-react";
-import { type ComponentType, type CSSProperties, type ReactNode } from "react";
 
 import { Container } from "@/components/layout/container";
 import { NavLink } from "@/components/navigation/nav-link";
@@ -9,28 +8,13 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/typography";
 import { mainNav, resumeLink } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
-import { STAGGER_MS } from "@/lib/motion";
-
-export type MenuItemProps = { index: number; className: string; children: ReactNode };
-
-/** Default list item: CSS rise-in, used until (or instead of) the Motion layer. */
-export function StaticMenuItem({ index, className, children }: MenuItemProps) {
-  const style: CSSProperties = { animationDelay: `${index * STAGGER_MS}ms` };
-  return (
-    <li className={`${className} motion-safe:animate-rise`} style={style}>
-      {children}
-    </li>
-  );
-}
 
 type MenuPanelProps = {
   onClose: () => void;
-  /** Wrapper for each animated row; lets the Motion layer swap in m.li. */
-  Item?: ComponentType<MenuItemProps>;
 };
 
-/** Menu contents shared by the static and animated versions. Contains no animation library code. */
-export function MenuPanel({ onClose, Item = StaticMenuItem }: MenuPanelProps) {
+/** Menu contents. No animation: the menu appears and disappears instantly. */
+export function MenuPanel({ onClose }: MenuPanelProps) {
   const { email } = siteConfig.contact;
 
   return (
@@ -43,8 +27,8 @@ export function MenuPanel({ onClose, Item = StaticMenuItem }: MenuPanelProps) {
       <nav aria-label="Main" className="flex flex-1 flex-col overflow-y-auto">
         <Container className="flex flex-1 flex-col justify-between gap-12 py-8">
           <ul className="flex flex-col">
-            {mainNav.map((item, index) => (
-              <Item key={item.href} index={index} className="border-b border-border">
+            {mainNav.map((item) => (
+              <li key={item.href} className="border-b border-border">
                 <NavLink
                   href={item.href}
                   onClick={onClose}
@@ -52,12 +36,12 @@ export function MenuPanel({ onClose, Item = StaticMenuItem }: MenuPanelProps) {
                 >
                   {item.label}
                 </NavLink>
-              </Item>
+              </li>
             ))}
           </ul>
 
           <ul className="flex flex-col gap-4">
-            <Item index={mainNav.length} className="">
+            <li>
               <a
                 href={resumeLink.href}
                 download
@@ -67,14 +51,14 @@ export function MenuPanel({ onClose, Item = StaticMenuItem }: MenuPanelProps) {
                 <Download aria-hidden="true" className="size-4" strokeWidth={1.75} />
                 <span className="sr-only"> (PDF)</span>
               </a>
-            </Item>
+            </li>
             {email && (
-              <Item index={mainNav.length + 1} className="flex flex-col gap-1">
+              <li className="flex flex-col gap-1">
                 <Label as="p">Email</Label>
                 <TextLink href={`mailto:${email}`} className="text-body-lg select-all">
                   {email}
                 </TextLink>
-              </Item>
+              </li>
             )}
           </ul>
         </Container>
