@@ -10,9 +10,12 @@ import { MenuPanel, type MenuItemProps } from "@/components/navigation/menu-pane
  * path on mobile.
  */
 
+// The panel is opaque from its first frame; only the rows animate in. Fading
+// the panel itself let the page show through, so its text and header icons
+// double-exposed with the menu's for ~200ms, which read as a flicker on phones.
 const panelVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.2, ease: [0.2, 0, 0, 1] } },
+  hidden: { opacity: 1 },
+  visible: { opacity: 1 },
   exit: { opacity: 0, transition: { duration: 0.18, delay: 0.08, ease: [0.2, 0, 0, 1] } },
 };
 
